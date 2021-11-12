@@ -43,24 +43,24 @@ function init() {
 
     // Camera and its position
     camera = new THREE.PerspectiveCamera( 60, aspectRatio, 0.1, 3000 );
-   // controls = new TrackballControls( camera, renderer.domElement );
+    controls = new TrackballControls( camera, renderer.domElement );
     camera.lookAt( scene.position );
-   // controls.rotateSpeed = 5.0;
-   // controls.panSpeed = 1.0;
+    controls.rotateSpeed = 5.0;
+    controls.panSpeed = 1.0;
     scrollHeight = document.documentElement.scrollHeight - 586;
     percent = window.scrollY / (scrollHeight * 0.01);
-   // controls.update();
+    controls.update();
     camera.position.z = 30;
     
     //loader
    
     // geometries
-    geometry = new THREE.SphereGeometry(4);
-    circlePlaneGeometry = new THREE.CircleGeometry(500, 30);
+    geometry = new THREE.SphereGeometry(4, 32, 32);
+    circlePlaneGeometry = new THREE.PlaneGeometry(250, 250, 100, 100);
 
     // materials
     material =  new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("./src/sphereTexture.jpg"), side: THREE.DoubleSide});
-    circlePlaneMaterial = new THREE.MeshPhongMaterial({map: new THREE.TextureLoader().load("./src/circleTexture.jpg"), side: THREE.DoubleSide, wireframe: true});
+    circlePlaneMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff, side: THREE.DoubleSide,  flatShading: THREE.FlatShading});
     // meshes
 
         // main cube mesh
@@ -83,21 +83,71 @@ function init() {
         circlePlane.castShadow = false;
         circlePlane.rotation.set(Math.PI * 1.5, 0, 0);
 
+    const planeArray = circlePlane.geometry.attributes.position.array;
+    let beginArray = [];
+    let newArray = [];
+    
+    for(let i = 0; i < planeArray.length; i += 3) {
+
+        const x = planeArray[i];
+        const y = planeArray[i + 1];
+        const z = planeArray[i + 2];
+
+        newArray[i] = x;
+        newArray[i + 1] = y;
+        beginArray[i] = x;
+        beginArray[i + 1] = y;
+        beginArray[i + 2] = 0;
+        
+         if(x > 6 || x < -6 || y > 6 || y < -6) {
+            
+          newArray[i + 2] = z + Math.random() * 10;
+        
+        }
+        else {
+            newArray[i + 2] = z;
+        }
+        
+            
+    }
+    
+    console.log(planeArray);
+    console.log(newArray);
+    tl4 = new gsap.timeline();
+
+        tl4.to(circlePlane.geometry.attributes.position.array, {
+            endArray: newArray,
+            duration: 3,
+            ease: "back",
+            // Make sure to tell it to update
+            onUpdate: () => circlePlane.geometry.attributes.position.needsUpdate = true
+          });
+    /*
+          tl4.to(circlePlane.geometry.attributes.position.array, {
+            endArray: beginArray,
+            duration: 3,
+            // Make sure to tell it to update
+            onUpdate: () => circlePlane.geometry.attributes.position.needsUpdate = true
+          });
+   
+*/
+
+   // console.log(circlePlane.geometry.attributes.position.array)
 
     // lights
 
     light = new THREE.SpotLight(0xffffff, 1);
     light.position.set( 10, 30, 0 );
-    light.angle = Math.PI / 12;
+    light.angle = Math.PI / 3;
     light.target = mesh;
     light.penumbra = 0.8;
-    light.distance = 100;
+    light.distance = 500;
     light.castShadow = true;
     light.shadow.mapSize.width = 2048;
     light.shadow.mapSize.height = 2048;
 
-    ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-    ambientLight.position.set( 10, 30, 0 );
+     ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+    ambientLight.position.set( 10, 50, 0 );
 
     
     spotLightHelper = new THREE.SpotLightHelper(light);
@@ -311,8 +361,7 @@ function handleWindowResize() {
 function animate() {
     requestAnimationFrame( animate );
     mesh.rotation.y += 0.01;
-    circlePlane.rotation.z -= 0.002;
-   // controls.update();
+    controls.update();
     render();
 
    
@@ -356,16 +405,14 @@ let headlines = [];
 for(let i = 1; i <= 3; i++) {
     headlines.push(document.getElementById(`headline${i}`));
 }
-console.log(headlines);
+
 
 for(let i = 0; i < headlines.length; i++) {
         gsap.to(headlines[i], { duration: 0.1, opacity: 0.35});
         headlines[i].addEventListener("mouseover", function() {
-            console.log("hello");
             gsap.to(headlines[i], { duration: 0.4, backgroundColor: "red", opacity: 1});
         });
         headlines[i].addEventListener("mouseleave", function() {
-            console.log("hello");
             gsap.to(headlines[i], { duration: 0.4, backgroundColor: "transparent", opacity: 0.35});
         });
 }
