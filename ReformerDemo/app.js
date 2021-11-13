@@ -1,5 +1,7 @@
 import * as THREE from "./three.js-r134-min/build/three.module.js";
 import { TrackballControls } from './three.js-r134-min/examples/jsm/controls/TrackballControls.js';
+
+
 // import Stats from './three.js-r134-min/examples/jsm/libs/stats.module.js';
 // import { GUI } from './three.js-r134-min/examples/jsm/libs/dat.gui.module.js';
 
@@ -8,18 +10,17 @@ var WIDTH, HEIGHT, aspectRatio;
 var renderer;
 var scene, camera;
 var controls;
-var material, circlePlaneMaterial;
-var geometry, circlePlaneGeometry;
-var mesh, circlePlane;
-var color;
-var loader;
+var material, circlePlaneMaterial, planematerial2, planematerial3, planematerial4;
+var geometry, circlePlaneGeometry, planeGeometry2, planeGeometry3, planeGeometry4;
+var mesh, circlePlane, plane2, plane3, plane4;
 var light, ambientLight, pointLight;
 var spotLightHelper;
 var gui;
 var percent;
 var scrollHeight;
 var tl, tl2, tl3, tl4;
-
+var count;
+var planeGroup, planeGroup2;
 
 init();
 animate();
@@ -34,6 +35,7 @@ function init() {
     renderer = new THREE.WebGLRenderer( { antialias: true } );
     renderer.setSize( WIDTH, HEIGHT );
     renderer.setClearColor( 0x000000 );
+    renderer.setPixelRatio(window.devicePixelRatio)
     renderer.shadowMap.enabled = true;
     document.body.appendChild( renderer.domElement );
 
@@ -55,18 +57,29 @@ function init() {
     //loader
    
     // geometries
+
     geometry = new THREE.SphereGeometry(4, 32, 32);
-    circlePlaneGeometry = new THREE.PlaneGeometry(250, 250, 100, 100);
+    circlePlaneGeometry = new THREE.PlaneGeometry(100, 100, 50, 50);
+    planeGeometry2 = new THREE.PlaneGeometry(100, 100, 50, 50);
+    planeGeometry3 = new THREE.PlaneGeometry(100, 100, 50, 50);
+    planeGeometry4 = new THREE.PlaneGeometry(100, 100, 50, 50);
 
     // materials
-    material =  new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("./src/sphereTexture.jpg"), side: THREE.DoubleSide});
-    circlePlaneMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff, side: THREE.DoubleSide,  flatShading: THREE.FlatShading});
+
+    material = new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("./src/abstractSphere.jpeg") });
+    circlePlaneMaterial = new THREE.MeshPhongMaterial({ map: new THREE.TextureLoader().load("./src/abstract.jpg"), side: THREE.DoubleSide, flatShading: THREE.FlatShading });
+                                                        // ,  flatShading: THREE.FlatShading
+    planematerial2 = new THREE.MeshPhongMaterial({ map: new THREE.TextureLoader().load("./src/abstract.jpg"), side: THREE.DoubleSide, flatShading: THREE.FlatShading });
+    planematerial3 = new THREE.MeshPhongMaterial({ map: new THREE.TextureLoader().load("./src/abstract.jpg"), side: THREE.DoubleSide, flatShading: THREE.FlatShading });
+    planematerial4 = new THREE.MeshPhongMaterial({ map: new THREE.TextureLoader().load("./src/abstract.jpg"), side: THREE.DoubleSide, flatShading: THREE.FlatShading });
+
     // meshes
 
         // main cube mesh
         mesh = new THREE.Mesh( geometry, material );
         mesh.position.y = -20;
-        mesh.position.x = 10;
+        //x = 10
+        mesh.position.x = 0;
         mesh.rotation.x += Math.PI * 0.075;
         mesh.rotation.z += Math.PI * -0.007;
         mesh.castShadow = true;
@@ -77,16 +90,45 @@ function init() {
     
         // circlePlaneMesh
         circlePlane = new THREE.Mesh( circlePlaneGeometry, circlePlaneMaterial );
-        circlePlane.position.x = 10;
-        circlePlane.position.y = -10;
+        circlePlane.position.x = 0;
+        circlePlane.position.y = -30;
         circlePlane.receiveShadow = true;
         circlePlane.castShadow = false;
         circlePlane.rotation.set(Math.PI * 1.5, 0, 0);
 
+        // plane2 right
+        plane2 = new THREE.Mesh( planeGeometry2, planematerial2 );
+        plane2.position.x = 50;
+        plane2.position.y = -10;
+        plane2.receiveShadow = true;
+        plane2.castShadow = false;
+        plane2.rotation.set(Math.PI * 1.5, Math.PI * 1.5, 0);
+
+
+        // plane3 left
+        plane3 = new THREE.Mesh( planeGeometry3, planematerial3 );
+        plane3.position.x = -50;
+        plane3.position.y = -10;
+        plane3.receiveShadow = true;
+        plane3.castShadow = false;
+        plane3.rotation.set(Math.PI * 1.5, Math.PI * 1.5, 0);
+
+        // plane4 top
+        plane4 = new THREE.Mesh( planeGeometry4, planematerial4 );
+        plane4.position.x = 0;
+        plane4.position.y = 30;
+        plane4.receiveShadow = true;
+        plane4.castShadow = false;
+        plane4.rotation.set(Math.PI * 1.5, 0, 0);
+
+
     const planeArray = circlePlane.geometry.attributes.position.array;
+    const meshArray = mesh.geometry.attributes.position.array;
     let beginArray = [];
     let newArray = [];
-    
+
+         count = circlePlane.geometry.attributes.position.count;
+
     for(let i = 0; i < planeArray.length; i += 3) {
 
         const x = planeArray[i];
@@ -97,47 +139,58 @@ function init() {
         newArray[i + 1] = y;
         beginArray[i] = x;
         beginArray[i + 1] = y;
-        beginArray[i + 2] = 0;
+        beginArray[i + 2] = 1;
         
-         if(x > 6 || x < -6 || y > 6 || y < -6) {
-            
-          newArray[i + 2] = z + Math.random() * 10;
-        
-        }
-        else {
-            newArray[i + 2] = z;
-        }
         
             
+          newArray[i + 2] = z + Math.random() * 5.55;
+        
+        
+        
     }
-    
-    console.log(planeArray);
-    console.log(newArray);
+    console.log(planeArray.length)
+
     tl4 = new gsap.timeline();
 
-        tl4.to(circlePlane.geometry.attributes.position.array, {
+        tl4.to([
+            circlePlane.geometry.attributes.position.array,
+            plane2.geometry.attributes.position.array,
+            plane3.geometry.attributes.position.array,
+            plane4.geometry.attributes.position.array
+            
+        ],  {
             endArray: newArray,
+            duration: 3,
+            ease: "back",
+            // Make sure to tell it to update
+            onUpdate: updateArray,
+
+          });
+
+    function updateArray () {
+        circlePlane.geometry.attributes.position.needsUpdate = true;
+        plane2.geometry.attributes.position.needsUpdate = true
+        plane3.geometry.attributes.position.needsUpdate = true
+        plane4.geometry.attributes.position.needsUpdate = true
+    }
+    /*
+          tl4.to(circlePlane.geometry.attributes.position.array, {
+            endArray: beginArray,
+            delay: 0.5,
             duration: 3,
             ease: "back",
             // Make sure to tell it to update
             onUpdate: () => circlePlane.geometry.attributes.position.needsUpdate = true
           });
-    /*
-          tl4.to(circlePlane.geometry.attributes.position.array, {
-            endArray: beginArray,
-            duration: 3,
-            // Make sure to tell it to update
-            onUpdate: () => circlePlane.geometry.attributes.position.needsUpdate = true
-          });
    
-*/
 
+*/
    // console.log(circlePlane.geometry.attributes.position.array)
 
     // lights
 
     light = new THREE.SpotLight(0xffffff, 1);
-    light.position.set( 10, 30, 0 );
+    light.position.set( 0, 30, 0 );
     light.angle = Math.PI / 3;
     light.target = mesh;
     light.penumbra = 0.8;
@@ -146,26 +199,34 @@ function init() {
     light.shadow.mapSize.width = 2048;
     light.shadow.mapSize.height = 2048;
 
-     ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+    ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
     ambientLight.position.set( 10, 50, 0 );
 
     
     spotLightHelper = new THREE.SpotLightHelper(light);
-
+    
+    pointLight = new THREE.PointLight( 0xffffff, 1);
+    pointLight.position.set(0, -20, 0);
     // scene.add
     scene.add( mesh );
+    
+    scene.add( plane2 );
+    scene.add( plane3 );
+    scene.add( plane4 );
     scene.add( circlePlane );
-    scene.add( light );
+   
+    //scene.add( light );
    // scene.add( spotLightHelper );
     scene.add( ambientLight );
+    scene.add( pointLight );
    
     
     window.addEventListener( 'resize', handleWindowResize, false );
 }
-    camera.position.set(-0.3187, 16.856, 24.40);
-    camera.rotation.set(-0.6044, -0.01, -0.01);
-    // -0.3187, 16.856, 24.40 
-   // -0.6044, -0.01, -0.01
+    camera.position.set(0, 11.510679823749568, 54.86135913947847);
+    camera.rotation.set(-0.019840756482754986, -0.047831050376982785, -0.0009487666218358663);
+    // -2.484171946449548, 11.510679823749568, 54.86135913947847
+   // -0.019840756482754986, -0.047831050376982785, -0.0009487666218358663
    
 /*  
 document.addEventListener('scroll', function () {
@@ -335,6 +396,7 @@ cubeFolder.add(mesh.position, 'z', -100, 100);
 cubeFolder.open();
 const stats = Stats();
 document.body.appendChild(stats.dom);
+
 */
 
  
@@ -360,7 +422,35 @@ function handleWindowResize() {
  
 function animate() {
     requestAnimationFrame( animate );
+    
+    const now = Date.now() / 1500;
+    for(let i = 0; i < count; i++) {
+
+        const x = circlePlane.geometry.attributes.position.getX(i);
+        const y = circlePlane.geometry.attributes.position.getY(i);
+        const xsin = Math.sin(x + now);
+        const ycos = Math.cos(y + now);
+        circlePlane.geometry.attributes.position.setZ(i, xsin + ycos);
+        plane2.geometry.attributes.position.setZ(i, xsin + ycos);
+        plane3.geometry.attributes.position.setZ(i, xsin + ycos);
+        plane4.geometry.attributes.position.setZ(i, xsin + ycos);
+        
+    }
+    circlePlane.geometry.attributes.position.needsUpdate = true;
+    circlePlane.geometry.computeVertexNormals();
+
+    plane2.geometry.attributes.position.needsUpdate = true;
+    plane2.geometry.computeVertexNormals();
+    
+    plane3.geometry.attributes.position.needsUpdate = true;
+    plane3.geometry.computeVertexNormals();
+    
+    plane4.geometry.attributes.position.needsUpdate = true;
+    plane4.geometry.computeVertexNormals();
+    
+    
     mesh.rotation.y += 0.01;
+    
     controls.update();
     render();
 
