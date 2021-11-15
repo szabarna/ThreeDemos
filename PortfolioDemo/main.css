@@ -1,0 +1,82 @@
+body {
+    overflow-x: hidden;
+    margin: 0;
+    font-family: monospace;
+    color: white;
+    user-select: none;
+    
+}
+
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 666;
+}
+
+main {
+    width: 100vw;
+    height: 200vw;
+    z-index: 99;
+    position: absolute;
+    justify-content: center;
+    text-align: center;
+    font-size: 5vh;
+}
+
+section {
+    height: 100vh;
+    padding: 20px;
+    font-size: 4vh;
+}
+
+span {
+    margin-right: 5px;
+    padding-bottom: 2px;
+}
+
+
+#headline1 {
+    width: fit-content;
+    display: flex;
+    font-family: monospace;
+    cursor: pointer;
+    right: 1000px;
+    position: relative;
+}
+
+#headline2 {
+    width: fit-content;
+    display: flex;
+    font-family: monospace;
+    cursor: pointer;
+    right: 1000px;
+    position: relative;
+}
+
+#headline3 {
+    width: fit-content;
+    display: flex;
+    font-family: monospace;
+    cursor: pointer;
+    right: 1200px;
+    position: relative;
+}
+
+h1 {
+    font-size: 0.75em;
+
+}
+
+
+.letter {
+    position: relative;
+    cursor: pointer;
+    z-index: 999;
+}
+
+.whitespace {
+    opacity: 0;
+}
+
+
