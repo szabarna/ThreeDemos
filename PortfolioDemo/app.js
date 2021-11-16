@@ -1,6 +1,9 @@
 import * as THREE from "./three.js-r134-min/build/three.module.js";
 import { TrackballControls } from './three.js-r134-min/examples/jsm/controls/TrackballControls.js';
+import { ScrollTrigger } from "./gsap-public/esm/ScrollTrigger.js";
 
+
+//import { ScrollTrigger } from './gsap-public/';
 
 // import Stats from './three.js-r134-min/examples/jsm/libs/stats.module.js';
 // import { GUI } from './three.js-r134-min/examples/jsm/libs/dat.gui.module.js';
@@ -21,6 +24,7 @@ var scrollHeight;
 var tl, tl2, tl3, tl4;
 var count;
 var planeGroup, planeGroup2;
+
 
 init();
 animate();
@@ -45,13 +49,13 @@ function init() {
 
     // Camera and its position
     camera = new THREE.PerspectiveCamera( 60, aspectRatio, 0.1, 3000 );
-    controls = new TrackballControls( camera, renderer.domElement );
+   // controls = new TrackballControls( camera, renderer.domElement );
     camera.lookAt( scene.position );
-    controls.rotateSpeed = 5.0;
-    controls.panSpeed = 1.0;
+    //controls.rotateSpeed = 5.0;
+   // controls.panSpeed = 1.0;
     scrollHeight = document.documentElement.scrollHeight - 586;
     percent = window.scrollY / (scrollHeight * 0.01);
-    controls.update();
+   // controls.update();
     camera.position.z = 30;
     
 
@@ -70,7 +74,7 @@ function init() {
 
    
     circlePlaneMaterial = new THREE.MeshPhysicalMaterial({
-            map: new THREE.TextureLoader().load("./src/abstract.jpg"),
+            map: new THREE.TextureLoader().load("./src/abstract2.jpeg"),
            // color: 0xffffff,
             side: THREE.DoubleSide,
             flatShading: THREE.FlatShading,
@@ -83,7 +87,7 @@ function init() {
       
     // ,  flatShading: THREE.FlatShading
     planematerial2 = new THREE.MeshPhysicalMaterial({
-            map: new THREE.TextureLoader().load("./src/abstract.jpg"),
+            map: new THREE.TextureLoader().load("./src/abstract2.jpeg"),
             side: THREE.DoubleSide,
             flatShading: THREE.FlatShading,
             reflectivity: 1,
@@ -93,7 +97,7 @@ function init() {
             fog: true,
            });
     planematerial3 = new THREE.MeshPhysicalMaterial({
-            map: new THREE.TextureLoader().load("./src/abstract.jpg"),
+            map: new THREE.TextureLoader().load("./src/abstract2.jpeg"),
             side: THREE.DoubleSide,
             flatShading: THREE.FlatShading,
             reflectivity: 1,
@@ -104,7 +108,7 @@ function init() {
             });
 
     planematerial4 = new THREE.MeshPhysicalMaterial({
-            map: new THREE.TextureLoader().load("./src/abstract.jpg"),
+            map: new THREE.TextureLoader().load("./src/abstract2.jpeg"),
             side: THREE.DoubleSide,
             flatShading: THREE.FlatShading,
             reflectivity: 1,
@@ -120,11 +124,8 @@ function init() {
         mesh.position.y = 0;
         //x = 10
         mesh.position.x = 0;
-        mesh.rotation.x += Math.PI * 0.075;
-        mesh.rotation.z += Math.PI * -0.007;
         mesh.castShadow = true;
         mesh.receiveShadow = false;
-        mesh.rotation.set(0, 0, 0);
         
        
     //mesh.rotation.z += Math.PI * -0.02;
@@ -183,9 +184,9 @@ function init() {
                 scene.add(planeGroup2);
             }
 
+            scene.add( planeGroup );
+            
         
-        scene.add( planeGroup );
-
     const planeArray = circlePlane.geometry.attributes.position.array;
     const meshArray = mesh.geometry.attributes.position.array;
     let beginArray = [];
@@ -262,13 +263,13 @@ function init() {
     light.shadow.mapSize.width = 2048;
     light.shadow.mapSize.height = 2048;
 
-    ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
-    ambientLight.position.set( 10, 50, 0 );
-
+    ambientLight = new THREE.AmbientLight(0xff0000, 0.4);
+    ambientLight.position.set( 0, 0, 0 );
+                                    // 10, 50, 0
     
     spotLightHelper = new THREE.SpotLightHelper(light);
     
-    pointLight = new THREE.PointLight( 0xffffff, 400, 500, 2);
+    pointLight = new THREE.PointLight( 0xff0000, 1000, 350, 2);
     pointLight.position.set(0, 0, 0);
     pointLight.add( mesh );
    
@@ -289,7 +290,7 @@ function init() {
    
     camera.position.set(0, 0, -60)
     camera.lookAt(mesh.position);
-    camera.updateProjectionMatrix();
+  //  camera.updateProjectionMatrix(); 
    // camera.position.set(0, 11.510679823749568, 54.86135913947847);
     // -2.484171946449548, 11.510679823749568, 54.86135913947847
    // -3.141592653589793, 0, -3.141592653589793
@@ -335,6 +336,7 @@ let strText3 = text3.textContent;
 let splitText3 = strText3.split("");
 
 let span, span2, span3;
+
 text.textContent = "";
 text2.textContent = "";
 text3.textContent = "";
@@ -345,12 +347,14 @@ text3.textContent = "";
        
           
    }
+   
    for(let i = 0; i < splitText2.length; i++) {
-    text2.innerHTML += "<span>" + splitText2[i]  + "</span>";
+    text2.innerHTML += "<span>" + splitText2[i] + " "  + "</span>";
      
     }
+    
     for(let i = 0; i < splitText3.length; i++) {
-    text3.innerHTML += "<span>" + splitText3[i]  + "</span>";
+    text3.innerHTML += "<span>" + splitText3[i] + " "  + "</span>";
         
     }
 
@@ -391,7 +395,7 @@ text3.textContent = "";
                 elasticity: 1000
             });
             */
-            gsap.to(spans[i], { scale: 2.5, duration: 1, ease: "elastic"});
+            gsap.to(spans[i], { scale: 1.25, duration: 1, ease: "elastic"});
 
         spans[i].addEventListener("mouseleave", function(e){
             
@@ -490,7 +494,7 @@ function handleWindowResize() {
 function animate() {
     requestAnimationFrame( animate );
    /*
-    const now = Date.now() / 100;
+    const now = Date.now() / 10000;
     for(let i = 0; i < count; i++) {
 
         const x = circlePlane.geometry.attributes.position.getX(i);
@@ -524,8 +528,8 @@ function animate() {
     scene.children[3].rotation.z += 0.001;
     scene.children[4].rotation.z -= 0.001;
     mesh.rotation.y += 0.01;
-    
-    controls.update();
+       
+  //  controls.update();
     render();
 
    
@@ -557,21 +561,22 @@ tl2.to(mesh.position, { y: 0, duration: 3, ease: "back"});
             tl3.to([mesh.position, pointLight.position], { y: 2, duration: 2, ease: Sine.easeInOut});
         }
     }, 4000);
+    /*
 
-    gsap.to([mesh.position, pointLight.position], {z: 300, duration: 4, ease: Sine});
+    gsap.to([mesh.position, pointLight.position], {z: 250, duration: 4, ease: Sine});
     gsap.to([mesh.position, pointLight.position], {z: 0, duration: 4, delay: 4, ease: Sine});
     setInterval(function() {
-      gsap.to([mesh.position, pointLight.position], {z: 300, duration: 4, ease: Sine});
+      gsap.to([mesh.position, pointLight.position], {z: 250, duration: 4, ease: Sine});
       gsap.to([mesh.position, pointLight.position], {z: 0, duration: 4, delay: 4, ease: Sine});
       
 }, 10000);   
-
+*/
 const headline1 = document.getElementById("headline1");
 const headline2 = document.getElementById("headline2");
 const headline3 = document.getElementById("headline3");
-gsap.to(headline1, { duration: 2, right: "0px", ease: "back"});
-gsap.to(headline2, { delay: 0.2, duration: 2, right: "0px", ease: "back"}); 
-gsap.to(headline3, { delay: 0.4, duration: 2, right: "0px", ease: "back", paddingRight: "0px"});
+gsap.to(headline1, { duration: 2, right: "0", ease: "back"});
+gsap.to(headline2, {  duration: 2, right: "35.75%", top: "2%", ease: "back"}); 
+gsap.to(headline3, {  duration: 2, right: "76.75%", top: "8%", ease: "back", paddingRight: "0px"});
 
 
 // h1 main mouseover animation
@@ -580,45 +585,57 @@ for(let i = 1; i <= 3; i++) {
     headlines.push(document.getElementById(`headline${i}`));
 }
 
-
+/*
 for(let i = 0; i < headlines.length; i++) {
         gsap.to(headlines[i], { duration: 0.1, opacity: 0.35});
         headlines[i].addEventListener("mouseover", function() {
-            gsap.to(headlines[i], { duration: 0.4, backgroundColor: "red", opacity: 1});
+            gsap.to(headlines[i], { duration: 0.4,  });
         });
         headlines[i].addEventListener("mouseleave", function() {
-            gsap.to(headlines[i], { duration: 0.4, backgroundColor: "transparent", opacity: 0.35});
+            gsap.to(headlines[i], { duration: 0.4, });
         });
 }
-
-// rotate PlaneGroup animation
-console.log(scene.children)
-/*
-setInterval(function() {
-
-        gsap.to([planeGroup.rotation, scene.children[1].rotation], {z: "+=0.65", duration: 6});
-
-        gsap.to([scene.children[2].rotation, scene.children[5].rotation], {z: "-=0.65", duration: 6});
-
-        gsap.to([scene.children[3].rotation, scene.children[0].rotation], {z: "+=0.65", duration: 12});
-
-        gsap.to([
-        planeGroup.material,
-        scene.children[1].material,
-        scene.children[2].material,
-        scene.children[5].material,
-        scene.children[3].material
+*/
 
 
+// CHANGE COLOR ANIMATION
+
+let counter = 0;
+setInterval(() => {
+
+       if(counter == 0)  gsap.to(pointLight.color, { r: 0, g: 0, b: 1, duration: 5, ease: Sine });
+       else if(counter == 1)  gsap.to(pointLight.color, { r: 0, g: 1, b: 0, duration: 5, ease: Sine });
+       else if(counter == 2)  gsap.to(pointLight.color, { r: 1, g: 0, b: 0, duration: 5, ease: Sine });
+
+       if(counter != 2) counter += 1;
+       else counter = 0
+       
+        
     
-    ],  
-        {   color: 0xffffff,
-            duration: 10,
-            envMap: 0,
-            update: camera.updateProjectionMatrix()
-        }
-    );
 }, 5000);
 
-*/
+// GSAP.SCROLLTRIGGER
+mesh.geometry.scale(0.75, 0.75, 0.75);
+gsap.registerPlugin(ScrollTrigger);
+
+ScrollTrigger.defaults({
+    immediateRender: true,
+    ease: "power1.inOut",
+    scrub: true,
+    scrub: 1
+  });
+console.log(pointLight)
+
+// MAIN ANIMATION
+let scene_anim = gsap.timeline();
+
+  scene_anim.to([camera.position, pointLight.position], { z: "+=520", scrollTrigger: {
+
+        trigger: ".section-two",
+        
+        start: "top bottom",
+        end: "top top",
+        update: camera.updateProjectionMatrix() 
+
+  }});
 
