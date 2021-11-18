@@ -1,6 +1,7 @@
 import * as THREE from "./three.js-r134-min/build/three.module.js";
 import { TrackballControls } from './three.js-r134-min/examples/jsm/controls/TrackballControls.js';
 import { ScrollTrigger } from "./gsap-public/esm/ScrollTrigger.js";
+import { Lensflare, LensflareElement } from './three.js-r134-min/examples/jsm/objects/Lensflare.js';
 
 
 //import { ScrollTrigger } from './gsap-public/';
@@ -41,6 +42,7 @@ function init() {
     renderer.setClearColor( 0x000000 );
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.shadowMap.enabled = true;
+    renderer.outputEncoding = THREE.sRGBEncoding;
     document.body.appendChild( renderer.domElement );
 
     // scene
@@ -51,11 +53,11 @@ function init() {
     camera = new THREE.PerspectiveCamera( 60, aspectRatio, 0.1, 3000 );
    // controls = new TrackballControls( camera, renderer.domElement );
     camera.lookAt( scene.position );
-    //controls.rotateSpeed = 5.0;
+   // controls.rotateSpeed = 5.0;
    // controls.panSpeed = 1.0;
     scrollHeight = document.documentElement.scrollHeight - 586;
     percent = window.scrollY / (scrollHeight * 0.01);
-   // controls.update();
+  //  controls.update();
     camera.position.z = 30;
     
 
@@ -74,7 +76,7 @@ function init() {
 
    
     circlePlaneMaterial = new THREE.MeshPhysicalMaterial({
-            map: new THREE.TextureLoader().load("./src/abstract2.jpeg"),
+            map: new THREE.TextureLoader().load("./src/abstract.jpg"),
            // color: 0xffffff,
             side: THREE.DoubleSide,
             flatShading: THREE.FlatShading,
@@ -87,33 +89,36 @@ function init() {
       
     // ,  flatShading: THREE.FlatShading
     planematerial2 = new THREE.MeshPhysicalMaterial({
-            map: new THREE.TextureLoader().load("./src/abstract2.jpeg"),
+            map: new THREE.TextureLoader().load("./src/abstract.jpg"),
             side: THREE.DoubleSide,
             flatShading: THREE.FlatShading,
             reflectivity: 1,
             metalness: 1,
             roughness: 0,
             emissive: 0x0,
-            fog: true,
+            fog: true
            });
     planematerial3 = new THREE.MeshPhysicalMaterial({
-            map: new THREE.TextureLoader().load("./src/abstract2.jpeg"),
+            map: new THREE.TextureLoader().load("./src/abstract.jpg"),
             side: THREE.DoubleSide,
             flatShading: THREE.FlatShading,
             reflectivity: 1,
             metalness: 1,
             roughness: 0,
             emissive: 0x0,
+            fog: true
 
             });
 
     planematerial4 = new THREE.MeshPhysicalMaterial({
-            map: new THREE.TextureLoader().load("./src/abstract2.jpeg"),
+            map: new THREE.TextureLoader().load("./src/abstract.jpg"),
             side: THREE.DoubleSide,
             flatShading: THREE.FlatShading,
             reflectivity: 1,
             metalness: 1,
             roughness: 0,
+            emissive: 0x0,
+            fog: true
        
          });
 
@@ -164,6 +169,7 @@ function init() {
         plane4.rotation.set(Math.PI * 2.5, 0, 0);
 
         // GROUP
+
             // MAIN
         planeGroup = new THREE.Group();
         planeGroup.add( circlePlane );
@@ -171,6 +177,7 @@ function init() {
         planeGroup.add( plane3 );
         planeGroup.add( plane4 );
         planeGroup.rotation.z = Math.PI * 0.75;
+
             // SUB
 
             for(let i = 0; i < 5; i++) {
@@ -181,11 +188,11 @@ function init() {
                 planeGroup2.add( plane4.clone() );
                 planeGroup2.position.z = 100 * (1 + i);
                 planeGroup2.rotation.z = Math.PI * 0.75;
-                scene.add(planeGroup2);
+                scene.add( planeGroup2 );
             }
 
             scene.add( planeGroup );
-            
+    
         
     const planeArray = circlePlane.geometry.attributes.position.array;
     const meshArray = mesh.geometry.attributes.position.array;
@@ -207,7 +214,7 @@ function init() {
         beginArray[i + 2] = 1;
         
 
-            if(i % 15 == 0) newArray[i + 2] = z + Math.random() * 7.5;
+            if(i % 15 === 0) newArray[i + 2] = z + Math.random() * 7.5;
             else newArray[i + 2] = z;
           
     }
@@ -223,6 +230,7 @@ function init() {
         ],  {
             endArray: newArray,
             //3
+            delay: 0.3,
             duration: 8,
             ease: "back",
             // Make sure to tell it to update
@@ -269,11 +277,31 @@ function init() {
     
     spotLightHelper = new THREE.SpotLightHelper(light);
     
-    pointLight = new THREE.PointLight( 0xff0000, 1000, 350, 2);
+    pointLight = new THREE.PointLight( 0xff0000, 1500, 250, 2);
     pointLight.position.set(0, 0, 0);
+    mesh.material.transparent = true;
+    mesh.material.opacity = 0;
+    mesh.material.depthWrite = false;
     pointLight.add( mesh );
-   
+
+    const textureLoader = new THREE.TextureLoader();
+
+    const textureFlare = textureLoader.load( "./src/lensflare.png" );
+    /*
+    const lensflare = new Lensflare();
+    const colorR = new THREE.Color( 0xff0000 );
+    const colorG = new THREE.Color( 0x00ff00 );
+    const colorB = new THREE.Color( 0x0000ff );
+    lensflare.addElement( new LensflareElement( textureFlare, 300.0, 1, colorR) );
+    lensflare.addElement( new LensflareElement( textureFlare, 300.0, 1, colorB) );
+    lensflare.addElement( new LensflareElement( textureFlare, 300.0, 1, colorB) );
+      */  
+   // pointLight.add( lensflare );
+   // console.log(lensflare);
+
     const pointLightHelper = new THREE.PointLightHelper(pointLight, 4);
+    
+    
     // scene.add
    // scene.add( mesh );
     /*
@@ -453,7 +481,6 @@ text3.textContent = "";
         }
 });    
 
-    spotLightHelper.update();
 
     
     
@@ -494,7 +521,7 @@ function handleWindowResize() {
 function animate() {
     requestAnimationFrame( animate );
    /*
-    const now = Date.now() / 10000;
+    const now = Date.now() / 1000;
     for(let i = 0; i < count; i++) {
 
         const x = circlePlane.geometry.attributes.position.getX(i);
@@ -521,15 +548,15 @@ function animate() {
     plane4.geometry.computeVertexNormals();
    */
 
-    planeGroup.rotation.z += 0.001;
-    scene.children[0].rotation.z -= 0.001;
-    scene.children[1].rotation.z += 0.001;
-    scene.children[2].rotation.z -= 0.001;
-    scene.children[3].rotation.z += 0.001;
-    scene.children[4].rotation.z -= 0.001;
+    planeGroup.rotation.z += 0.0005;
+    scene.children[0].rotation.z -= 0.0005;
+    scene.children[1].rotation.z += 0.0005;
+    scene.children[2].rotation.z -= 0.0005;
+    scene.children[3].rotation.z += 0.0005;
+    scene.children[4].rotation.z -= 0.0005;
     mesh.rotation.y += 0.01;
        
-  //  controls.update();
+    //controls.update();
     render();
 
    
@@ -551,14 +578,16 @@ gsap.to("span", {duration: 2});
         // SPHERE FLOAT ANIMATION
 
 tl2 = new gsap.timeline();
-tl2.to(mesh.position, { y: 0, duration: 3, ease: "back"});
+
+tl2.to([mesh.position, pointLight.position], {  y: 2, duration: 2,   ease: Sine.easeInOut});
+tl2.to([mesh.position, pointLight.position], { y: -2, duration: 2, ease: Sine.easeInOut});
 
     setInterval(function() {
             tl3 = new gsap.timeline();
             if(!tl2.isActive()){
             tl3.to([mesh.position, pointLight.position], {  y: 2, duration: 2,   ease: Sine.easeInOut});
             tl3.to([mesh.position, pointLight.position], { y: -2, duration: 2, ease: Sine.easeInOut});
-            tl3.to([mesh.position, pointLight.position], { y: 2, duration: 2, ease: Sine.easeInOut});
+           // tl3.to([mesh.position, pointLight.position], { y: 2, duration: 2, ease: Sine.easeInOut});
         }
     }, 4000);
     /*
